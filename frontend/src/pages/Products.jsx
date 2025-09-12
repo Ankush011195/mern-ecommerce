@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import API from "../api";
 import axios from "axios";
 
 function Products() {
@@ -20,7 +21,7 @@ function Products() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        let url = "http://localhost:5000/api/products";
+        let url = "https://mern-ecommerce-pg1x.onrender.com/api/products";
         if (category) {
           url += `?category=${category}`;
         }
@@ -40,7 +41,7 @@ function Products() {
       if (!token) return;
 
       try {
-        const { data } = await axios.get("http://localhost:5000/api/wishlist", {
+        const { data } = await API.get("/wishlist", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setWishlist(data.map((p) => p._id)); // store only product IDs
@@ -74,8 +75,8 @@ function Products() {
     if (!token) return alert("Please login first");
 
     try {
-      await axios.post(
-        `http://localhost:5000/api/wishlist/${productId}`,
+      await API.post(
+        `/wishlist/${productId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

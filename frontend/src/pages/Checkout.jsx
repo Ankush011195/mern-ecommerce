@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../api"; // ✅ import API instance
 
 function Checkout() {
   const navigate = useNavigate();
@@ -24,45 +25,40 @@ function Checkout() {
       return;
     }
 
-    const orderItems = cart.map(item => ({
-    name: item.name,
-    qty: item.quantity,       // ✅ rename quantity → qty
-    price: item.price,
-    product: item._id,         // ✅ rename _id → product
-    image: item.image    
-  }));
+    const orderItems = cart.map((item) => ({
+      name: item.name,
+      qty: item.quantity, // ✅ backend expects qty
+      price: item.price,
+      product: item._id, // ✅ backend expects product id
+      image: item.image,
+    }));
 
     try {
-      const res = await fetch("http://localhost:5000/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
+      const { data } = await API.post(
+        "/orders",
+        {
           orderItems,
           shippingAddress: { address, city, postalCode, country },
-          paymentMethod: "Cash",   
+          paymentMethod: "Cash",
           totalPrice,
-        }),
-      });
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("Order response:", data);
 
-      const data = await res.json();
-      if (res.ok) {
-        alert("Order placed successfully!");
-        localStorage.removeItem("cart");
-        navigate("/myorders");
-      } else {
-        alert(data.message || "Something went wrong");
-      }
+      alert("Order placed successfully!");
+      localStorage.removeItem("cart");
+      navigate("/myorders");
     } catch (err) {
       console.log(err);
-      alert("Server error");
+      alert(err.response?.data?.message || "Server error");
     }
   };
 
   return (
-   <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-lg">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           Checkout

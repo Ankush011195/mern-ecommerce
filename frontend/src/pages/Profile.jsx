@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../api";
 
 function Profile() {
   const [user, setUser] = useState(null);
@@ -17,12 +17,12 @@ function Profile() {
           return;
         }
 
-        const { data } = await axios.get(
-          "http://localhost:5000/api/users/profile",
+        const { data } = await API.get("/users/profile",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+        console.log("Fetched Profile Data:", data); // 👈 Check this
 
         setUser(data);
         setForm({ name: data.name, email: data.email, password: "" });
@@ -43,13 +43,14 @@ function Profile() {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const { data } = await axios.put(
-        "http://localhost:5000/api/users/profile",
+      const { data } = await API.put("/users/profile",
         form,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      console.log("Updated Profile Response:", data); // 👈 Check this
+
       setUser(data);
       setMessage("✅ Profile updated successfully!");
     } catch (error) {

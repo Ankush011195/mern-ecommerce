@@ -60,7 +60,7 @@
 // export default Login;
 
 import { useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { useNavigate } from "react-router-dom";
 
 function Login({ setUser }) { // receive setUser from App.jsx
@@ -72,10 +72,7 @@ function Login({ setUser }) { // receive setUser from App.jsx
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/users/login",
-        { email, password }
-      );
+      const { data } = await API.post("/users/login", { email, password });
 
       // Save user and token in localStorage
       localStorage.setItem("token", data.token);

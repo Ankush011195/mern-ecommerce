@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-
+import API from "../api";
 function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
   const token = localStorage.getItem("token");
@@ -9,7 +8,8 @@ function Wishlist() {
     const fetchWishlist = async () => {
       if (!token) return;
       try {
-        const { data } = await axios.get("http://localhost:5000/api/wishlist/", {
+        const { data } = await API.get(
+          "/wishlist", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setWishlist(data);
@@ -22,7 +22,7 @@ function Wishlist() {
 
   const removeFromWishlist = async (productId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/wishlist/${productId}`, {
+      await API.delete(`/wishlist/${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setWishlist((prev) => prev.filter((p) => p._id !== productId));

@@ -5,9 +5,9 @@ import CategoryCard from "../components/CategoryCard";
 const Home = () => {
   // Example featured products (later you can fetch from backend)
   const featuredProducts = [
-    { id: 1, name: "iPhone 15", price: "₹79,999", image: "/images/mobile.jpg" },
-    { id: 2, name: "MacBook Air M2", price: "₹1,04,999", image: "/images/laptop.jpg" },
-    { id: 3, name: "Gaming Headset", price: "₹4,999", image: "/images/gaming.jpg" },
+    { id: 1, name: "iPhone 15", price: "₹79,999", image: "https://cdn.mos.cms.futurecdn.net/yDn3ZSXu9eSBxmXQDZ4PCF.jpg" },
+    { id: 2, name: "MacBook Air M2", price: "₹1,04,999", image: "https://i.ytimg.com/vi/HTiBSG7E474/maxresdefault.jpg" },
+    { id: 3, name: "Gaming Headset", price: "₹4,999", image: "https://kreo-tech.com/cdn/shop/files/Artboard_1_9.png?v=1753673089" },
   ];
 
   // Example reviews (can be dynamic later)
