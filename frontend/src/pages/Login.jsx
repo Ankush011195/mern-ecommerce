@@ -62,6 +62,7 @@
 import { useState } from "react";
 import API from "../api";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Login({ setUser }) { // receive setUser from App.jsx
   const navigate = useNavigate();
@@ -126,10 +127,11 @@ function Login({ setUser }) { // receive setUser from App.jsx
     )}
 
     <p className="text-center text-sm text-gray-600 mt-6">
-      Don’t have an account?{" "}
+        Don’t have an account? <Link to="/register" className="text-blue-600 hover:underline font-medium">Register</Link>
+      {/* Don’t have an account?{" "}
       <a href="/register" className="text-blue-600 hover:underline font-medium">
         Register
-      </a>
+      </a> */}
     </p>
   </div>
 </div>

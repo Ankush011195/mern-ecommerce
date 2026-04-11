@@ -1,5 +1,6 @@
 // import axios from "axios";
 import { useState } from 'react';
+import { Link } from "react-router-dom";
 import API from "../api";
 function Register(){
   const [name, setname] = useState("");
@@ -68,10 +69,11 @@ function Register(){
     )}
 
     <p className="text-center text-sm text-gray-600 mt-6">
-      Already have an account?{" "}
-      <a href="/login" className="text-blue-600 hover:underline font-medium">
+      {/* Already have an account?{" "} */}
+       Already have an account? <Link to="/login" className="text-blue-600 hover:underline font-medium" >Login</Link>
+      {/* <a href="/login" className="text-blue-600 hover:underline font-medium">
         Login
-      </a>
+      </a> */}
     </p>
   </div>
 </div>
