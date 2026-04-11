@@ -9,9 +9,13 @@ function Register(){
 
   const handleSubmit = async (e)=>{
     e.preventDefault();
+    if (!name || !email || !password) {
+      setmessage("Please fill all fields");
+      return;
+    }
     try {
       const res = await API.post("/users/register",{
-        name,
+        name, 
         email,
         password,
       });

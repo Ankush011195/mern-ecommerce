@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 
 
+
 export const registerUser = async (req,res)=>{
     try{
         const{name , email , password}= req.body;
@@ -20,7 +21,6 @@ export const registerUser = async (req,res)=>{
               isAdmin: req.body.isAdmin || false
 
         });
-
         res.status(201).json({
             _id : user._id,
             name : user.name,

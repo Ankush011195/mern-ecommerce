@@ -15,7 +15,7 @@ const Navbar = ({ user, setUser }) => {
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-white">
-          MyStore
+          Gadget Store
         </Link>
 
         {/* Nav Links */}
