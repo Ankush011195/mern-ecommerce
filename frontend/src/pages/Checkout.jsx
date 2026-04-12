@@ -202,7 +202,7 @@ function Checkout() {
       });
 
       const options = {
-        key: "YOUR_RAZORPAY_KEY_ID",
+        key: "rzp_test_ScIAFYzK9Nd6M7",
         amount: data.amount,
         currency: "INR",
         name: "MERN Store",
