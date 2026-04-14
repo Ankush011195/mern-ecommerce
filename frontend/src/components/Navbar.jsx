@@ -4,8 +4,11 @@ const Navbar = ({ user, setUser }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     localStorage.removeItem("user");
+    if (user?._id) {
+    localStorage.removeItem(`cart_${user._id}`);
+  }
     setUser(null);
     navigate("/login");
   };

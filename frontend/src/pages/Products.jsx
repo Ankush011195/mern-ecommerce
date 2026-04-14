@@ -5,8 +5,10 @@ import axios from "axios";
 
 function Products() {
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem("cart");
+    const [cart, setCart] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) return [];
+    const savedCart = localStorage.getItem(`cart_${user._id}`);
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
@@ -37,14 +39,14 @@ function Products() {
   // Fetch user's wishlist
   useEffect(() => {
     const fetchWishlist = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) return;
 
       try {
         const { data } = await API.get("/wishlist", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setWishlist(data.map((p) => p._id)); // store only product IDs
+        setWishlist(data.map((p) => p._id)); 
       } catch (err) {
         console.log("Error fetching wishlist:", err);
       }
@@ -54,6 +56,11 @@ function Products() {
 
   // Add to cart
   const addToCart = (product) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+    alert("Please login first");
+    return;
+  }
     const existingItem = cart.find((item) => item._id === product._id);
     let updatedCart;
     if (existingItem) {
@@ -66,12 +73,14 @@ function Products() {
       updatedCart = [...cart, { ...product, quantity: 1 }];
     }
     setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    // localStorage.setItem("cart", JSON.stringify(updatedCart));
+     localStorage.setItem(`cart_${user._id}`, JSON.stringify(updatedCart));
+     alert("Product added to cart");
   };
 
   // Add to wishlist
   const addToWishlist = async (productId) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) return alert("Please login first");
 
     try {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import API from "../api";
 function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     const fetchWishlist = async () => {

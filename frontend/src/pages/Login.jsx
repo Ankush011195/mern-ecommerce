@@ -76,7 +76,7 @@ function Login({ setUser }) { // receive setUser from App.jsx
       const { data } = await API.post("/users/login", { email, password });
 
       // Save user and token in localStorage
-      localStorage.setItem("token", data.token);
+      sessionStorage.setItem("token", data.token);
       localStorage.setItem(
         "user",
         JSON.stringify({ _id: data._id, name: data.name, email: data.email })

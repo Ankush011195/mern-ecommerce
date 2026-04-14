@@ -6,14 +6,17 @@ function Cart() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart");
+    const user = JSON.parse(localStorage.getItem("user"));
+    const savedCart = localStorage.getItem(`cart_${user?._id}`);
     setCart(savedCart ? JSON.parse(savedCart) : []);
   }, []);
 
   const removeItem = (id) => {
     const updatedCart = cart.filter((item) => item._id !== id);
     setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    // localStorage.setItem("cart", JSON.stringify(updatedCart));
+    const user = JSON.parse(localStorage.getItem("user"));
+    localStorage.setItem(`cart_${user._id}`, JSON.stringify(updatedCart));
   };
 
   const updateQuantity = (id, quantity) => {
@@ -21,7 +24,8 @@ function Cart() {
       item._id === id ? { ...item, quantity: Number(quantity) } : item
     );
     setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    const user = JSON.parse(localStorage.getItem("user"));
+    localStorage.setItem(`cart_${user._id}`, JSON.stringify(updatedCart));
   };
 
   const handleCheckout = () => {

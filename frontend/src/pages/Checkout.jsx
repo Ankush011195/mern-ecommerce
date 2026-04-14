@@ -1,167 +1,42 @@
-// import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import API from "../api"; // ✅ import API instance
-
-// function Checkout() {
-//   const navigate = useNavigate();
-//   const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-//   const [address, setAddress] = useState("");
-//   const [city, setCity] = useState("");
-//   const [postalCode, setPostalCode] = useState("");
-//   const [country, setCountry] = useState("");
-
-//   const totalPrice = cart.reduce(
-//     (acc, item) => acc + item.price * item.quantity,
-//     0
-//   );
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     const token = localStorage.getItem("token");
-//     if (!token) {
-//       alert("You must login first");
-//       navigate("/login");
-//       return;
-//     }
-
-//     const orderItems = cart.map((item) => ({
-//       name: item.name,
-//       qty: item.quantity, // ✅ backend expects qty
-//       price: item.price,
-//       product: item._id, // ✅ backend expects product id
-//       image: item.image,
-//     }));
-
-//     try {
-//       const { data } = await API.post(
-//         "/orders",
-//         {
-//           orderItems,
-//           shippingAddress: { address, city, postalCode, country },
-//           paymentMethod: "Cash",
-//           totalPrice,
-//         },
-//         {
-//           headers: { Authorization: `Bearer ${token}` },
-//         }
-//       );
-//       console.log("Order response:", data);
-
-//       alert("Order placed successfully!");
-//       localStorage.removeItem("cart");
-//       navigate("/myorders");
-//     } catch (err) {
-//       console.log(err);
-//       alert(err.response?.data?.message || "Server error");
-//     }
-//   };
-
-//   return (
-//     <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
-//       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-lg">
-//         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-//           Checkout
-//         </h2>
-//         <form onSubmit={handleSubmit} className="space-y-4">
-//           <input
-//             type="text"
-//             placeholder="Address"
-//             value={address}
-//             onChange={(e) => setAddress(e.target.value)}
-//             required
-//             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-//           />
-
-//           <input
-//             type="text"
-//             placeholder="City"
-//             value={city}
-//             onChange={(e) => setCity(e.target.value)}
-//             required
-//             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-//           />
-
-//           <input
-//             type="text"
-//             placeholder="Postal Code"
-//             value={postalCode}
-//             onChange={(e) => setPostalCode(e.target.value)}
-//             required
-//             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-//           />
-
-//           <input
-//             type="text"
-//             placeholder="Country"
-//             value={country}
-//             onChange={(e) => setCountry(e.target.value)}
-//             required
-//             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-//           />
-
-//           <h3 className="text-xl font-semibold text-gray-700 mt-4">
-//             Total: <span className="text-green-600">${totalPrice.toFixed(2)}</span>
-//           </h3>
-
-//           <button
-//             type="submit"
-//             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition duration-300"
-//           >
-//             Place Order
-//           </button>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Checkout;
-
-
-
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api";
 
 function Checkout() {
   const navigate = useNavigate();
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  // const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const user = JSON.parse(localStorage.getItem("user"));
+  const cart = JSON.parse(localStorage.getItem(`cart_${user?._id}`)) || [];
 
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [country, setCountry] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const totalPrice = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
 
-  // ==============================
-  // 💰 OLD CASH ORDER (UNCHANGED)
-  // ==============================
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("You must login first");
-      navigate("/login");
-      return;
-    }
-
-    const orderItems = cart.map((item) => ({
-      name: item.name,
-      qty: item.quantity,
-      price: item.price,
-      product: item._id,
-      image: item.image,
-    }));
+  // this for  CASH ORDER
+  
+  const handleCashOrder = async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) return navigate("/login");
 
     try {
-      const { data } = await API.post(
+      setLoading(true);
+
+      const orderItems = cart.map((item) => ({
+        name: item.name,
+        qty: item.quantity,
+        price: item.price,
+        product: item._id,
+        image: item.image,
+      }));
+
+      await API.post(
         "/orders",
         {
           orderItems,
@@ -169,148 +44,134 @@ function Checkout() {
           paymentMethod: "Cash",
           totalPrice,
         },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      alert("Order placed successfully!");
+      localStorage.removeItem("cart");
+      navigate("/myorders");
+    } catch (err) {
+      console.log(err);
+      alert("Error placing order");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // this for  Razorpay Payment
+
+  const handlePayment = async () => {
+    console.log(address, city, postalCode, country);
+    const token = sessionStorage.getItem("token");
+    if (!token) return navigate("/login");
+
+    try {
+      setLoading(true);
+      const orderItems = cart.map((item) => ({
+        name: item.name,
+        qty: item.quantity,
+        price: item.price,
+        product: item._id,
+        image: item.image,
+      }));
+
+      const { data } = await API.post(
+        "/payment/create-order",
+        {
+          amount: totalPrice,
+          orderItems,
+          shippingAddress: { address, city, postalCode, country },
+        },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      alert("Cash Order placed successfully!");
-      localStorage.removeItem("cart");
-      navigate("/myorders");
-    } catch (err) {
-      console.log(err);
-      alert(err.response?.data?.message || "Server error");
-    }
-  };
-
-  // ==============================
-  // 💳 NEW RAZORPAY PAYMENT
-  // ==============================
-  const handlePayment = async (e) => {
-    e.preventDefault();
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("You must login first");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const { data } = await API.post("/payment/create-order", {
-        amount: totalPrice,
-      });
-
       const options = {
         key: "rzp_test_ScIAFYzK9Nd6M7",
-        amount: data.amount,
-        currency: "INR",
+        amount: data.razorpayOrder.amount,   
+        currency: data.razorpayOrder.currency, 
         name: "MERN Store",
         description: "Payment",
-        order_id: data.id,
+          order_id: data.razorpayOrder.id, 
+
 
         handler: async function (response) {
-          console.log("Payment Success:", response);
+              console.log("✅ SUCCESS RESPONSE:", response);
+          try {
+            // 2. VERIFY PAYMENT FIRST
+            const verifyRes = await API.post("/payment/verify", {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+                  console.log("✅ VERIFY RESPONSE:", verifyRes.data);
 
-          const orderItems = cart.map((item) => ({
-            name: item.name,
-            qty: item.quantity,
-            price: item.price,
-            product: item._id,
-            image: item.image,
-          }));
-
-          // save order as PAID
-          await API.post(
-            "/orders",
-            {
-              orderItems,
-              shippingAddress: { address, city, postalCode, country },
-              paymentMethod: "Razorpay",
-              totalPrice,
-            },
-            {
-              headers: { Authorization: `Bearer ${token}` },
+            if (!verifyRes.data.success) {
+              alert("Payment verification failed");
+              return;
             }
-          );
-
-          alert("Payment Successful 🎉");
-          localStorage.removeItem("cart");
-          navigate("/myorders");
+            alert("Payment verified & Successful 🎉");
+            localStorage.removeItem("cart");
+            navigate("/myorders");
+          } catch (err) {
+            console.log(err);
+            alert("Payment verification failed");
+          }
         },
       };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
-
     } catch (error) {
       console.log(error);
       alert("Payment failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-lg">
+
         <h2 className="text-2xl font-bold mb-6 text-center">
           Checkout
         </h2>
 
-        <form className="space-y-4">
+        <div className="space-y-4">
 
-          <input
-            type="text"
-            placeholder="Address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg"
-          />
+          <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Address" className="w-full p-2 border rounded" />
 
-          <input
-            type="text"
-            placeholder="City"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg"
-          />
+          <input value={city} onChange={(e) => setCity(e.target.value)} placeholder="City" className="w-full p-2 border rounded" />
 
-          <input
-            type="text"
-            placeholder="Postal Code"
-            value={postalCode}
-            onChange={(e) => setPostalCode(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg"
-          />
+          <input value={postalCode} onChange={(e) => setPostalCode(e.target.value)} placeholder="Postal Code" className="w-full p-2 border rounded" />
 
-          <input
-            type="text"
-            placeholder="Country"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg"
-          />
+          <input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Country" className="w-full p-2 border rounded" />
 
-          <h3 className="text-xl font-semibold">
+          <h3 className="text-lg font-semibold">
             Total: ₹{totalPrice}
           </h3>
 
-          {/* CASH */}
           <button
-            onClick={handleSubmit}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg"
+            type="button"
+            disabled={loading}
+            onClick={handleCashOrder}
+            className="w-full bg-blue-600 text-white py-3 rounded"
           >
-            Place Order (Cash)
+            Cash Order
           </button>
 
-          {/* RAZORPAY */}
           <button
+            type="button"
+            disabled={loading}
             onClick={handlePayment}
-            className="w-full bg-green-600 text-white py-3 rounded-lg"
+            className="w-full bg-green-600 text-white py-3 rounded"
           >
-            Pay Now (Razorpay)
+            Pay with Razorpay
           </button>
 
-        </form>
+        </div>
       </div>
     </div>
   );

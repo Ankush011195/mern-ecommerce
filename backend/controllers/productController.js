@@ -19,10 +19,6 @@ export const getProducts = async (req, res) => {
   }
 };
 
-
-// @desc    Fetch single product by ID
-// @route   GET /api/products/:id
-// @access  Public
 export const getProductsbyId = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);

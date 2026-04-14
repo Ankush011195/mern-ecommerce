@@ -7,7 +7,7 @@ function MyOrders() {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) {
         setError("You must be logged in to view your orders.");
         setLoading(false);
@@ -48,6 +48,19 @@ function MyOrders() {
             <h3 className="text-xl font-semibold text-gray-800 mb-2">Order ID: {order._id}</h3>
             <p className="text-gray-600 mb-2">Total Price: <span className="text-green-600">${order.totalPrice.toFixed(2)}</span></p>
             <p className="text-gray-600 mb-2">Payment Method: {order.paymentMethod}</p>
+            {/* 🔥 PAYMENT STATUS */}
+                <p className="text-gray-600 mb-4">
+                  Payment Status:{" "}
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      order.isPaid
+                        ? "bg-green-100 text-green-600"
+                        : "bg-red-100 text-red-600"
+                    }`}
+                  >
+                    {order.isPaid ? "Paid ✅" : "Pending ❌"}
+                  </span>
+                </p>
             <p className="text-gray-600 mb-4">Ordered on: {new Date(order.createdAt).toLocaleDateString()}</p>
 
              <p className="text-gray-600 mb-4">

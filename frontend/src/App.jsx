@@ -13,8 +13,18 @@ import MyOrders from "./pages/MyOrders";
 import Wishlist from "./pages/Wishlist.jsx";
 
 function App() {  
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
-     
+  // const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
+  const [user, setUser] = useState(() => {
+  const token = sessionStorage.getItem("token");
+  const storedUser = localStorage.getItem("user");
+
+  if (token && storedUser) {
+    return JSON.parse(storedUser);
+  } else {
+    localStorage.removeItem("user"); // cleanup
+    return null;
+  }
+});
   return (
     <>
     <Navbar user={user} setUser={setUser}/>
