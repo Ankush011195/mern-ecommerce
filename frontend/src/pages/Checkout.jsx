@@ -6,8 +6,9 @@ function Checkout() {
   const navigate = useNavigate();
   // const cart = JSON.parse(localStorage.getItem("cart")) || [];
   const user = JSON.parse(localStorage.getItem("user"));
-  const cart = JSON.parse(localStorage.getItem(`cart_${user?._id}`)) || [];
-
+  const [cart, setCart] = useState(
+    JSON.parse(localStorage.getItem(`cart_${user?._id}`)) || []
+  );
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
@@ -48,7 +49,9 @@ function Checkout() {
       );
 
       alert("Order placed successfully!");
-      localStorage.removeItem("cart");
+      const user = JSON.parse(localStorage.getItem("user"));
+      localStorage.removeItem(`cart_${user._id}`);  
+      setCart([]);   
       navigate("/myorders");
     } catch (err) {
       console.log(err);
@@ -112,7 +115,9 @@ function Checkout() {
               return;
             }
             alert("Payment verified & Successful 🎉");
-            localStorage.removeItem("cart");
+            const user = JSON.parse(localStorage.getItem("user"));
+            localStorage.removeItem(`cart_${user._id}`);
+            setCart([]);
             navigate("/myorders");
           } catch (err) {
             console.log(err);
