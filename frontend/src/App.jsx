@@ -11,6 +11,7 @@ import Checkout from "./pages/Checkout";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import MyOrders from "./pages/MyOrders";
 import Wishlist from "./pages/Wishlist.jsx";
+import Chatbot from"./components/Chatbot.jsx";
 
 function App() {  
   // const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
@@ -39,6 +40,7 @@ function App() {
         <Route path="/checkout" element={<PrivateRoute user={user}><Checkout /></PrivateRoute>} />
         <Route path="/myorders" element={<PrivateRoute user={user}><MyOrders /></PrivateRoute>}/>
     </Routes>
+    <Chatbot />
     </>
   );
 }

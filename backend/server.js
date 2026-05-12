@@ -7,6 +7,7 @@ import productroutes from "./routes/Productroutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import chatRoute from "./routes/chatRoute.js";
 
 dotenv.config();
 const app = express();
@@ -19,6 +20,7 @@ app.use("/api/products" , productroutes);
 app.use("/api/orders",orderRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/payment",paymentRoutes)
+app.use("/api/chat",chatRoute);
 
 app.get('/',(req,res)=>{
     res.send("API is running")
