@@ -1,15 +1,12 @@
 import Product from "../models/Product.js";
 
-// @desc    Fetch all products
-// @route   GET /api/products
-// @access  Public
 
 export const getProducts = async (req, res) => {
   try {
     const { category, query } = req.query;
 
     const filter = {};
-    if (category) filter.category = category;              // e.g. "mobile"
+    if (category) filter.category = category;              
     if (query) filter.name = { $regex: query, $options: "i" };
 
     const products = await Product.find(filter);

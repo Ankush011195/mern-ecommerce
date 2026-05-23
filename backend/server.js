@@ -8,6 +8,8 @@ import orderRoutes from "./routes/orderRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import chatRoute from "./routes/chatRoute.js";
+import adminRoutes from "./routes/adminRoutes.js";
+
 
 dotenv.config();
 const app = express();
@@ -21,6 +23,7 @@ app.use("/api/orders",orderRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/payment",paymentRoutes)
 app.use("/api/chat",chatRoute);
+app.use("/api/admin",adminRoutes);
 
 app.get('/',(req,res)=>{
     res.send("API is running")

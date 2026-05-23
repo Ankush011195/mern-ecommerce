@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
 
   try {
     const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile", // free & fast
+      model: "llama-3.3-70b-versatile", 
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: message }

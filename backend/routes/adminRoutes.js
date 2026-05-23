@@ -1,11 +1,75 @@
-// import express from "express";
-// import { protect, admin } from ("../middleware/authMiddleware");
-// import { getAllUsers, getAllOrders, manageProducts } from ("../controllers/adminController");
-// const router = express.Router();
+import express from "express";
 
-// // Only admin can access
-// // router.get("/users", protect, admin, getAllUsers);
-// router.get("/", protect, admin, getAllOrders);
-// router.post("/products", protect, admin, manageProducts);
+import { protect } from "../middleware/authMiddleware.js";
+import adminMiddleware from "../middleware/adminMiddleware.js";
 
-// export default router;
+import {
+  getUsers,
+  deleteUser,
+  getOrders,
+  deliverOrder,
+  getStats,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+} from "../controllers/adminController.js";
+
+const router = express.Router();
+
+router.get(
+  "/users",
+  protect,
+  adminMiddleware,
+  getUsers
+);
+
+router.delete(
+  "/users/:id",
+  protect,
+  adminMiddleware,
+  deleteUser
+);
+
+router.get(
+  "/orders",
+  protect,
+  adminMiddleware,
+  getOrders
+);
+
+router.put(
+  "/orders/:id/deliver",
+  protect,
+  adminMiddleware,
+  deliverOrder
+);
+
+router.get(
+  "/stats",
+  protect,
+  adminMiddleware,
+  getStats
+);
+
+router.post(
+  "/products",
+  protect,
+  adminMiddleware,
+  addProduct
+);
+
+router.put(
+  "/products/:id",
+  protect,
+  adminMiddleware,
+  updateProduct
+);
+
+router.delete(
+  "/products/:id",
+  protect,
+  adminMiddleware,
+  deleteProduct
+);
+
+export default router;

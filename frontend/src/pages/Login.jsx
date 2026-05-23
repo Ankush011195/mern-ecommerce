@@ -145,6 +145,8 @@
 import { useState } from "react";
 import API from "../api";
 import { useNavigate, Link } from "react-router-dom";
+import { signInWithGoogle} from "../firebase";
+
 
 function Login({ setUser }) {
   const navigate = useNavigate();
@@ -163,9 +165,8 @@ function Login({ setUser }) {
       const { data } = await API.post("/users/login", { email, password });
       sessionStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify({
-        _id: data._id, name: data.name, email: data.email
-      }));
-      setUser({ _id: data._id, name: data.name, email: data.email });
+        _id: data._id, name: data.name, email: data.email, isAdmin: data.isAdmin }));
+      setUser({ _id: data._id, name: data.name, email: data.email , isAdmin: data.isAdmin});
       setMsgType("success");
       setMessage("Login successful! Redirecting...");
       setTimeout(() => navigate("/profile"), 1000);
@@ -176,6 +177,38 @@ function Login({ setUser }) {
       setLoading(false);
     }
   };
+
+  const handleGoogleLogin = async () => {
+  try {
+    const result = await signInWithGoogle();
+    const { displayName, email, uid } = result.user;
+
+    // Tumhare backend ko bhejo
+    const { data } = await API.post("/users/google-login", {
+      name: displayName,
+      email: email,
+      googleId: uid,
+    });
+
+    // Same as normal login
+    sessionStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify({
+      _id: data._id,
+      name: data.name,
+      email: data.email,
+      isAdmin: data.isAdmin,
+    }));
+    setUser({ _id: data._id, name: data.name, email: data.email, isAdmin: data.isAdmin });
+    setMsgType("success");
+    setMessage("Login successful!");
+    setTimeout(() => navigate("/profile"), 1000);
+
+  } catch (err) {
+    setMsgType("error");
+    setMessage("Google login failed. Try again!");
+    console.log(err);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4"
@@ -269,10 +302,12 @@ function Login({ setUser }) {
           <div className="flex-1 h-px bg-gray-100"></div>
         </div>
 
-        {/* Google */}
-        <button className="w-full py-3 rounded-xl border border-gray-200 text-sm font-medium
-                           flex items-center justify-center gap-2 hover:bg-gray-50
-                           transition-all hover:scale-[1.01] active:scale-[0.98]">
+        {/* google */}
+       <button
+          onClick={handleGoogleLogin}
+          className="w-full py-3 rounded-xl border border-gray-200 text-sm font-medium
+                    flex items-center justify-center gap-2 hover:bg-gray-50
+                    transition-all hover:scale-[1.01] active:scale-[0.98]">
           <svg width="16" height="16" viewBox="0 0 48 48">
             <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.5 30.2 0 24 0 14.8 0 6.9 5.4 3 13.3l7.8 6C12.8 13 18 9.5 24 9.5z"/>
             <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17z"/>

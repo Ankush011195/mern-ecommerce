@@ -57,9 +57,34 @@ export const loginUser =async (req , res)=>{
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
-  }
-     
+  } 
 }
+
+export const googleLogin = async (req, res) => {
+  const { name, email, googleId } = req.body;
+  try {
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        password: googleId,
+        isAdmin: false,
+      });
+    }
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 export const getUserProfile = async (req, res) => {
   if (req.user) {

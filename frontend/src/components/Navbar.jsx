@@ -146,6 +146,13 @@ const Navbar = ({ user, setUser }) => {
                                                hover:bg-gray-100 px-3 py-2 rounded-lg transition-all">
                 My Orders
               </Link>
+              {user?.isAdmin && (
+            <Link to="/admin"
+                  className="text-sm font-medium px-3 py-2 rounded-lg
+                            bg-indigo-500 text-white hover:bg-indigo-600 transition">
+              Admin Panel
+            </Link>
+          )}
             </>
           )}
         </div>
